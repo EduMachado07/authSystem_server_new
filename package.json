@@ -1,0 +1,24 @@
+{
+  "name": "modelsolid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsnd --transpile-only --respawn --ignore-watch node_modules src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.17",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.22",
+    "express": "^4.21.2",
+    "nodemailer": "^7.0.3",
+    "uuid": "^11.1.0"
+  }
+}
