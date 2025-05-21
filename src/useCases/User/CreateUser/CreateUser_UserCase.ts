@@ -1,7 +1,8 @@
-import { User } from "../../entities/User";
-import { IMailProvider } from "../../providers/IMailProvider";
-import { IUserRepository } from "../../repositories/IUserRepository";
+import { User } from "../../../entities/User";
+import { IMailProvider } from "../../../providers/IMailProvider";
+import { IUserRepository } from "../../../repositories/IUserRepository";
 import { ICreateUserDTO } from "./CreateUser_DTO";
+import bcrypt from "bcrypt";
 
 export class CreateUserUserCase {
     constructor(
@@ -16,7 +17,14 @@ export class CreateUserUserCase {
             throw new Error("User already exists");
         }
 
-        const user = new User(data);
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        const user = new User({
+            name: data.name,
+            email: data.email,
+            password: hashedPassword,
+            phones: data.phones
+        });
 
         await this.usersRepository.save(user);
 

@@ -3,18 +3,18 @@ import { DeleteUserUserCase } from "./DeleteUser_UserCase";
 
 export class DeleteUserController {
     constructor(
-        private createUserUserCase: DeleteUserUserCase
+        private deleteUserUserCase: DeleteUserUserCase
     ) { }
 
     async handle(req: Request, res: Response): Promise<Response> {
-        const { email } = req.body;
+        const { id } = req.body;
 
-        if (!email) throw new Error("Email não informado.");
+        if (!id) throw new Error("Usuário não informado.");
 
 
         try {
-            await this.createUserUserCase.execute({
-                email
+            await this.deleteUserUserCase.execute({
+                id
             })
             return res.status(201).json('Conta removida do sistema com sucesso')
         } catch (error) {
