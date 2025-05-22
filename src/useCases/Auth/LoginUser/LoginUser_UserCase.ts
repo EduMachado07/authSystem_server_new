@@ -1,7 +1,7 @@
 import { IMailProvider } from "../../../providers/IMailProvider";
 import { ITokenRepository } from "../../../repositories/ITokenRepository";
 import { IUserRepository } from "../../../repositories/IUserRepository";
-import { ILoginUserDTO } from "./LoginUser.DTO";
+import { ILoginUserDTO } from "./LoginUser_DTO";
 import bcrypt from "bcrypt";
 
 export class LoginUserUserCase {
@@ -24,9 +24,22 @@ export class LoginUserUserCase {
             throw new Error("Password invalid");
         }
 
-        const acessToken = await this.tokensRepository.signAccess({ id: user.id, email: user.email })
+        await this.mailProvider.sendMail({
+            to: {
+                name: user.name,
+                email: user.email
+            },
+            from: {
+                name: 'Eduardo Machado',
+                email: 'eduardo.silvamachado07@gmail.com'
+            },
+            subject: 'Novo acesso no sistema',
+            body: '<p>Identificamos a entrada de um dispositivo na sua conta.</p>'
+        })
+
+        const accessToken = await this.tokensRepository.signAccess({ id: user.id, email: user.email })
         const refreshToken = await this.tokensRepository.signRefresh({ id: user.id, email: user.email })
 
-        return { acessToken, refreshToken }
+        return { accessToken, refreshToken }
     }
 }

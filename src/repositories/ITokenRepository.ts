@@ -5,4 +5,5 @@ export interface ITokenRepository {
     signRefresh(payload: Token): Promise<string>
     verifyAccess(token: string): Promise<string>
     verifyRefresh(token: string): Promise<string>
+    // refreshTokens(access: string, refresh: string): Promise<string>
 }

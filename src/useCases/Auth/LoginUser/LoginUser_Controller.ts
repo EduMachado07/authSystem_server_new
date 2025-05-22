@@ -17,7 +17,7 @@ export class LoginUserController {
                 password
             })
 
-            res.cookie('accessToken', token.acessToken, {
+            res.cookie('accessToken', token.accessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
