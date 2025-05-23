@@ -1,3 +1,4 @@
+import { NotFound } from "../../../repositories/IErrorsRepository";
 import { IUserRepository } from "../../../repositories/IUserRepository";
 import { IGetResponseDTO, IGetUserDTO } from "./GetUser_DTO";
 
@@ -9,11 +10,11 @@ export class GetUserUserCase {
     async execute(data: IGetUserDTO): Promise<IGetResponseDTO> {
         const userAlreadyExists = await this.usersRepository.findByID(data.id);
 
-        const phonesUser = await this.usersRepository.findPhonesUser(data.id)
-
         if (!userAlreadyExists) {
-            throw new Error("User not exists");
+            throw new NotFound("Usuário não encontrado");
         }
+
+        const phonesUser = await this.usersRepository.findPhonesUser(data.id)
 
         return {
             email: userAlreadyExists.email,

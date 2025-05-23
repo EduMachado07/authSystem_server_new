@@ -1,6 +1,6 @@
 import { PostgresUsersRepository } from "../../../repositories/implementations/PostgresUsersRepository";
 import { GetUserController } from "./GetUser_Controller";
-import { GetUserUserCase } from "./GetUser_UserCase";
+import { GetUserUserCase } from "./GetUser_UseCase";
 
 // INFRA
 const postgresUserRepository = new PostgresUsersRepository();

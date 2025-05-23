@@ -1,15 +1,16 @@
-import { Request, Response } from "express";
-import { CreateUserUserCase } from "./CreateUser_UserCase";
+import { NextFunction, Request, Response } from "express";
+import { CreateUserUseCase } from "./CreateUser_UseCase";
+import { BadRequest } from "../../../repositories/IErrorsRepository";
 
 export class CreateUserController {
     constructor(
-        private createUserUserCase: CreateUserUserCase
+        private createUserUserCase: CreateUserUseCase
     ) { }
 
-    async handle(req: Request, res: Response): Promise<Response> {
+    async handle(req: Request, res: Response, next: NextFunction): Promise<Response> {
         const { name, email, password, phones } = req.body;
 
-        if (!name || !email || !password) throw new Error("Dados insuficientes.");
+        if (!name || !email || !password) throw new BadRequest("Requisição inválida. Verifique os campos enviados.");
 
         try {
             await this.createUserUserCase.execute({
@@ -20,9 +21,7 @@ export class CreateUserController {
             })
             return res.status(201).json('Usuário criado com sucesso')
         } catch (error) {
-            return res.status(400).json({
-                message: error.message || 'Unexpected error.'
-            })
+            next(error)
         }
     }
 }

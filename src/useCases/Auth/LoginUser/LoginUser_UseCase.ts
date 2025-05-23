@@ -1,4 +1,5 @@
 import { IMailProvider } from "../../../providers/IMailProvider";
+import { NotFound, Unauthorized } from "../../../repositories/IErrorsRepository";
 import { ITokenRepository } from "../../../repositories/ITokenRepository";
 import { IUserRepository } from "../../../repositories/IUserRepository";
 import { ILoginUserDTO } from "./LoginUser_DTO";
@@ -15,13 +16,13 @@ export class LoginUserUserCase {
         const user = await this.usersRepository.findByEmail(data.email)
 
         if (!user) {
-            throw new Error("User not exists");
+            throw new NotFound('Usuário não encontrado.')
         }
 
         const passwordIsCorrect = await bcrypt.compare(data.password, user.password)
 
         if (!passwordIsCorrect) {
-            throw new Error("Password invalid");
+            throw new Unauthorized("Senha incorreta.");
         }
 
         await this.mailProvider.sendMail({

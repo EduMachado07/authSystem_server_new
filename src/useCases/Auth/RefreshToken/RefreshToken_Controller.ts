@@ -1,17 +1,17 @@
-import { Request, Response } from "express";
-import { RefreshTokenUserCase } from "./RefreshToken_UserCase";
+import { NextFunction, Request, Response } from "express";
+import { RefreshTokenUserCase } from "./RefreshToken_UseCase";
+import { Unauthorized } from "../../../repositories/IErrorsRepository";
 
 export class RefreskTokenController {
-  constructor(private refreshTokenUserCase: RefreshTokenUserCase) {}
+  constructor(private refreshTokenUserCase: RefreshTokenUserCase) { }
 
-  async handle(req: Request, res: Response): Promise<Response> {
-    const { accessToken, refreshToken } = req.body;
+  async handle(req: Request, res: Response, next: NextFunction): Promise<Response> {
+    const { refreshToken } = req.cookies;
 
-    if (!accessToken || !refreshToken) throw new Error("Tokens não informados.");
+    if (!refreshToken) throw new Unauthorized("Refresh token not provided");
 
     try {
       const token = await this.refreshTokenUserCase.execute({
-        accessToken,
         refreshToken,
       });
 
@@ -28,11 +28,9 @@ export class RefreskTokenController {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dias
       });
 
-      return res.status(201).json("Usuário criado com sucesso");
+      return res.status(200).json({ message: "Renewed tokens" });
     } catch (error) {
-      return res.status(400).json({
-        message: error.message || "Unexpected error.",
-      });
+      next(error)
     }
   }
 }

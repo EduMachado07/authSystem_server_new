@@ -1,10 +1,11 @@
 import { User } from "../../../entities/User";
 import { IMailProvider } from "../../../providers/IMailProvider";
+import { Conflict } from "../../../repositories/IErrorsRepository";
 import { IUserRepository } from "../../../repositories/IUserRepository";
 import { ICreateUserDTO } from "./CreateUser_DTO";
 import bcrypt from "bcrypt";
 
-export class CreateUserUserCase {
+export class CreateUserUseCase {
     constructor(
         private usersRepository: IUserRepository,
         private mailProvider: IMailProvider,
@@ -14,17 +15,10 @@ export class CreateUserUserCase {
         const userAlreadyExists = await this.usersRepository.findByEmail(data.email);
 
         if (userAlreadyExists) {
-            throw new Error("User already exists");
+            throw new Conflict("Usuário já está cadastrado.");
         }
 
-        const hashedPassword = await bcrypt.hash(data.password, 10);
-
-        const user = new User({
-            name: data.name,
-            email: data.email,
-            password: hashedPassword,
-            phones: data.phones
-        });
+        const user = new User(data);
 
         await this.usersRepository.save(user);
 

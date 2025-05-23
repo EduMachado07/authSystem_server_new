@@ -1,5 +1,5 @@
-// import { User } from "../../entities/User";
 import { IMailProvider } from "../../../providers/IMailProvider";
+import { NotFound } from "../../../repositories/IErrorsRepository";
 import { IUserRepository } from "../../../repositories/IUserRepository";
 import { IDeleteUserDTO } from "./DeleteUser_DTO";
 
@@ -12,7 +12,7 @@ export class DeleteUserUserCase {
     async execute(data: IDeleteUserDTO) {
         const user = await this.usersRepository.findByID(data.id);
 
-        if (!user) throw new Error("User not exists");
+        if (!user) throw new NotFound('Usuário não encontrado.');
 
         await this.usersRepository.delete(data.id);
 
@@ -27,6 +27,6 @@ export class DeleteUserUserCase {
             },
             subject: 'Conta Removida',
             body: '<p>Sua conta foi removida do sistema.</p>'
-        })
+        });
     }
 }

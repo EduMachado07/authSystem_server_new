@@ -1,8 +1,8 @@
 import { MailTrapMailProvider } from "../../../providers/implementations/MailTrapMailProvider";
 import { PostgresUsersRepository } from "../../../repositories/implementations/PostgresUsersRepository";
-import { SignTokensRepository } from "../../../repositories/implementations/TokensRepository";
+import { SignTokensRepository } from "../../../repositories/implementations/SignTokensRepository";
 import { LoginUserController } from "./LoginUser_Controller";
-import { LoginUserUserCase } from "./LoginUser_UserCase";
+import { LoginUserUserCase } from "./LoginUser_UseCase";
 
 // INFRA
 const postgresUserRepository = new PostgresUsersRepository();

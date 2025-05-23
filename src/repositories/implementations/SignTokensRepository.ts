@@ -8,22 +8,22 @@ export class SignTokensRepository implements ITokenRepository {
 
     async signAccess(payload: Token): Promise<string> {
         return jwt.sign(
-            { payload },
+            payload,
             this.accessSecret,
-            { expiresIn: '1h' }
+            { expiresIn: '15m' }
         );
     }
     async signRefresh(payload: Token): Promise<string> {
         return jwt.sign(
-            { payload },
+            payload,
             this.refreshSecret,
-            { expiresIn: '13d' }
+            { expiresIn: '3d' }
         );
     }
-    async verifyAccess(token: string): Promise<string> {
+    async verifyAccess(token: string): Promise<Token> {
         return jwt.verify(token, this.accessSecret);
     }
-    async verifyRefresh(token: string): Promise<string> {
+    async verifyRefresh(token: string): Promise<Token> {
         return jwt.verify(token, this.refreshSecret);
     }
 }

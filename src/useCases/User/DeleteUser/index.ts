@@ -1,7 +1,7 @@
 import { MailTrapMailProvider } from "../../../providers/implementations/MailTrapMailProvider";
 import { PostgresUsersRepository } from "../../../repositories/implementations/PostgresUsersRepository";
 import { DeleteUserController } from "./DeleteUser_Controller";
-import { DeleteUserUserCase } from "./DeleteUser_UserCase";
+import { DeleteUserUserCase } from "./DeleteUser_UseCase";
 
 // INFRA
 const postgresUserRepository = new PostgresUsersRepository();

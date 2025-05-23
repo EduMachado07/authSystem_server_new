@@ -3,7 +3,7 @@ import { Token } from "../entities/Token";
 export interface ITokenRepository {
     signAccess(payload: Token): Promise<string>
     signRefresh(payload: Token): Promise<string>
-    verifyAccess(token: string): Promise<string>
-    verifyRefresh(token: string): Promise<string>
+    verifyAccess(token: string): Promise<Token>
+    verifyRefresh(token: string): Promise<Token>
     // refreshTokens(access: string, refresh: string): Promise<string>
 }

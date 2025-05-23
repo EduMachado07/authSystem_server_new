@@ -1,40 +1,42 @@
-import { Request, Response } from "express";
-import { LoginUserUserCase } from "./LoginUser_UserCase";
+import { Request, Response, NextFunction } from "express";
+import { LoginUserUserCase } from "./LoginUser_UseCase";
+import { BadRequest } from "../../../repositories/IErrorsRepository";
 
 export class LoginUserController {
     constructor(
-        private loginUserUserCase: LoginUserUserCase
+        private loginUserUseCase: LoginUserUserCase
     ) { }
 
-    async handle(req: Request, res: Response): Promise<Response> {
-        const { email, password } = req.body;
-
-        if (!email || !password) throw new Error("Dados não informados.");
-
+    async handle(req: Request, res: Response, next: NextFunction): Promise<Response> {
         try {
-            const token = await this.loginUserUserCase.execute({
+            const { email, password } = req.body;
+
+            if (!email || !password) {
+                throw new BadRequest('Email e senha são obrigatórios.');
+            }
+
+            const token = await this.loginUserUseCase.execute({
                 email,
                 password
-            })
+            });
 
             res.cookie('accessToken', token.accessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 15, // 15 minutos
-            })
+            });
+
             res.cookie('refreshToken', token.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 7 dias
-            })
+            });
 
-            return res.status(201).json('Usuário criado com sucesso')
+            return res.status(200).json({ message: 'Usuário entrou no sistema.' });
         } catch (error) {
-            return res.status(400).json({
-                message: error.message || 'Unexpected error.'
-            })
+            next(error);
         }
     }
 }

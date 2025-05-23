@@ -1,6 +1,7 @@
 import { User } from "../../entities/User";
 import { IUserRepository } from "../IUserRepository";
 import { PrismaClient } from "../../generated/prisma";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -25,12 +26,16 @@ export class PostgresUsersRepository implements IUserRepository {
         return phones
     }
     async save(user: User): Promise<void> {
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+
         await prisma.user.create({
             data: {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                password: user.password,
+                password: hashedPassword,
+                verificationCode: user.verificationCode,
+                isVerified: user.isVerified,
                 phones: {
                     create: user.phones ?? []
                 }
@@ -40,6 +45,28 @@ export class PostgresUsersRepository implements IUserRepository {
     async delete(id: string): Promise<void> {
         await prisma.user.delete({
             where: { id }
+        })
+    }
+    async saveVerificationCode(id: string): Promise<string> {
+        const code = Math.floor(100000 + Math.random() * 900000).toString()
+        await prisma.user.update({
+            where: { id: id },
+            data: { verificationCode: code }
+        })
+        return code
+    }
+    async resetVerificationCode(id: string): Promise<void> {
+        await prisma.user.update({
+            where: { id: id },
+            data: { verificationCode: null },
+        });
+    }
+    async updatePassword(id: string, password: string): Promise<void> {
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.update({
+            where: { id: id },
+            data: { password: hashedPassword }
         })
     }
 }
